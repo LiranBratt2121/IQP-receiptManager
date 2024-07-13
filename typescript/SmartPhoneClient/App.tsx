@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TextInput, Button, FlatList } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebase/firebaseConfig';
 
@@ -18,7 +18,7 @@ const App = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>View Receipts</Text>
       <TextInput
         style={styles.input}
@@ -36,7 +36,7 @@ const App = () => {
           </View>
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
