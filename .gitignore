@@ -43,3 +43,4 @@ yarn-error.*
 
 kotlin/CashRegisterClient/receipt-reader-a8efb-firebase-adminsdk-8ff3e-5e4f1f1ef6.json
 
+typescript/SmartPhoneClient/firebase/secret_firebaseConfig.ts
