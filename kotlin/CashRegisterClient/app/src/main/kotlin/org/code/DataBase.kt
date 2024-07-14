@@ -29,11 +29,11 @@ class DataBase(secretFilePath: String) {
     }
 
     fun saveToDb(clientId: String, content: String): Boolean {
-        val docRef = m_database.collection(clientId).document()
+        val contentsCollectionRef = m_database.collection("users").document(clientId).collection("contents")
         val contentData = ContentData(content)
 
         return try {
-            docRef.set(contentData).get()
+            contentsCollectionRef.add(contentData).get()
             true
         } catch (e: Exception) {
             e.printStackTrace()
