@@ -80,23 +80,56 @@ const App = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>View Receipts</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter collection name"
-        value={collectionName}
-        onChangeText={setCollectionName}
-      />
-      <Button title="Fetch Collection" onPress={fetchCollection} />
+      <Text style={styles.title}>User Login</Text>
+      {user ? (
+        <View style={styles.userDataContainer}>
+          <Text style={styles.userDataTitle}>User Content:</Text>
+          {contents.length > 0 ? (
       <FlatList
-        data={documents}
+              data={contents}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <View style={styles.item}>
-            <Text>{JSON.stringify(item)}</Text>
+                  <Text style={styles.itemText}>{`Content: ${item.content}`}</Text>
+                  <Text style={styles.itemText}>{`Created: ${item.created}`}</Text>
           </View>
         )}
       />
+          ) : (
+            <Text style={styles.noDataText}>No content available</Text>
+          )}
+          <TouchableOpacity style={styles.backButton} onPress={handleSignOut}>
+            <Text style={styles.backButtonText}>Back</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            value={phoneNumber}
+            onChangeText={setPhoneNumber}
+            keyboardType="phone-pad"
+            placeholderTextColor="#ccc"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            secureTextEntry
+            onChangeText={setPassword}
+            placeholderTextColor="#ccc"
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+              <Text style={styles.buttonText}>Sign Up</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+              <Text style={styles.buttonText}>Sign In</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </SafeAreaView>
   );
 };
