@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TextInput, Button, FlatList } from 'react-native';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from './firebase/firebaseConfig';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, SafeAreaView, TextInput, FlatList, Alert, Platform, TouchableOpacity } from 'react-native';
+import { doc, getDocs, collection, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, User } from 'firebase/auth';
+import { db, auth } from './firebase/firebaseConfig';
 
 const App = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -85,16 +86,16 @@ const App = () => {
         <View style={styles.userDataContainer}>
           <Text style={styles.userDataTitle}>User Content:</Text>
           {contents.length > 0 ? (
-      <FlatList
+            <FlatList
               data={contents}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.item}>
                   <Text style={styles.itemText}>{`Content: ${item.content}`}</Text>
                   <Text style={styles.itemText}>{`Created: ${item.created}`}</Text>
-          </View>
-        )}
-      />
+                </View>
+              )}
+            />
           ) : (
             <Text style={styles.noDataText}>No content available</Text>
           )}
@@ -137,29 +138,81 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#36393f',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#fff',
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
+    height: 50,
+    borderColor: '#ccc',
     borderWidth: 1,
+    borderRadius: 8,
     marginBottom: 20,
     width: '100%',
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#2f3136',
+    color: '#fff',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 5,
+    backgroundColor: '#7289da',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  backButton: {
+    backgroundColor: '#7289da',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  backButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  userDataContainer: {
+    width: '100%',
+    marginTop: 20,
+  },
+  userDataTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#fff',
   },
   item: {
-    backgroundColor: '#f9c2ff',
-    padding: 20,
+    backgroundColor: '#42454a',
+    padding: 15,
     marginVertical: 8,
-    marginHorizontal: 16,
+    borderRadius: 8,
+  },
+  itemText: {
+    fontSize: 16,
+    color: '#fff',
+  },
+  noDataText: {
+    color: '#fff',
   },
 });
 
