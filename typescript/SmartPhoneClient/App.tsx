@@ -4,16 +4,77 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from './firebase/firebaseConfig';
 
 const App = () => {
-  const [collectionName, setCollectionName] = useState('');
-  const [documents, setDocuments] = useState<any[]>([]);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState<User | null>(null);
+  const [contents, setContents] = useState<any[]>([]);
 
-  const fetchCollection = async () => {
+  const handleSignUp = async () => {
+    if (!validatePhoneNumber(phoneNumber)) {
+      showAlert('Invalid Phone Number', 'Please enter a valid phone number.');
+      return;
+    }
+
     try {
-      const querySnapshot = await getDocs(collection(db, collectionName));
-      const docs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setDocuments(docs);
-    } catch (error) {
-      console.error('Error fetching collection: ', error);
+      const userCredentials = await createUserWithEmailAndPassword(auth, `${phoneNumber}@IQP.com`, password);
+      await setDoc(doc(db, 'users', phoneNumber), {});
+
+      setUser(userCredentials.user);
+      fetchUserContents(phoneNumber);
+    } catch (error: any) {
+      console.error('Error signing up: ', error);
+      showAlert('Error', error.message);
+    }
+  };
+
+  const handleSignIn = async () => {
+    if (!validatePhoneNumber(phoneNumber)) {
+      showAlert('Invalid Phone Number', 'Please enter a valid phone number.');
+      return;
+    }
+
+    try {
+      const userCredentials = await signInWithEmailAndPassword(auth, `${phoneNumber}@IQP.com`, password);
+      setUser(userCredentials.user);
+      fetchUserContents(phoneNumber);
+    } catch (error: any) {
+      console.error('Error signing in: ', error);
+      showAlert('Error', error.message);
+    }
+  };
+
+  const handleSignOut = () => {
+    setUser(null);
+    setContents([]);
+  };
+
+  const fetchUserContents = async (phone: string) => {
+    try {
+      const contentsCollectionRef = collection(db, 'users', phone, 'contents');
+      const contentsSnapshot = await getDocs(contentsCollectionRef);
+
+      if (!contentsSnapshot.empty) {
+        const contentsData = contentsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setContents(contentsData);
+      } else {
+        showAlert('No Data Found', 'No content data found for the provided phone number.');
+      }
+    } catch (error: any) {
+      console.error('Error fetching content data: ', error);
+      showAlert('Error', error.message);
+    }
+  };
+
+  const validatePhoneNumber = (phone: string) => {
+    const phoneRegex = /^[0-9]{10}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const showAlert = (title: string, message: string) => {
+    if (Platform.OS === 'web') {
+      window.alert(`${title}\n\n${message}`);
+    } else {
+      Alert.alert(title, message, [{ text: 'OK' }], { cancelable: true });
     }
   };
 
